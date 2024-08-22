@@ -1,52 +1,42 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use dioxus_logger::tracing::{info, Level};
-
-#[derive(Clone, Routable, Debug, PartialEq)]
-enum Route {
-    #[route("/")]
-    Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
-}
 
 fn main() {
-    // Init logger
-    dioxus_logger::init(Level::INFO).expect("failed to init logger");
-    info!("starting app");
     launch(App);
 }
 
 fn App() -> Element {
     rsx! {
-        Router::<Route> {}
-    }
-}
-
-#[component]
-fn Blog(id: i32) -> Element {
-    rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {id}"
-    }
-}
-
-#[component]
-fn Home() -> Element {
-    let mut count = use_signal(|| 0);
-
-    rsx! {
-        Link {
-            to: Route::Blog {
-                id: count()
-            },
-            "Go to blog"
-        }
         div {
-            h1 { "High-Five counter: {count}" }
-            button { onclick: move |_| count += 1, "Up high!" }
-            button { onclick: move |_| count -= 1, "Down low!" }
+            class: "flex flex-col",
+            div {
+                "Different Fonts:"
+            }
+            div {
+                class: "font-inter",
+                "Inter"
+            }
+            div {
+                class: "font-inter font-bold",
+                "Inter Bold"
+            }
+            div {
+                class: "font-inter font-bold italic",
+                "Inter Bold Italic"
+            }
+            div {
+                class: "font-faBrands font-normal",
+                ""
+            }
+            div {
+                class: "font-faRegular font-normal",
+                ""
+            }
+            div {
+                class: "font-faSolid font-black",
+                ""
+            }
         }
     }
 }

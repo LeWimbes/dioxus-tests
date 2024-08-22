@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
+
+
+/* Variable Inter Fonts */
+@supports (font-variation-settings: normal) {
+    @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url("https://static.igem.wiki/teams/5088/wiki/fonts/inter-variablefont-opsz-wght.ttf") format("truetype");
+        font-named-instance: "Regular";
+    }
+
+    @font-face {
+        font-family: "Inter";
+        font-style: italic;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url("https://static.igem.wiki/teams/5088/wiki/fonts/inter-italic-variablefont-opsz-wght.ttf") format("truetype");
+        font-named-instance: "Italic";
+    }
+}
+
+/* Static FontAwesome Fonts */
+@supports not (font-variation-settings: normal) {
+    @font-face {
+        font-family: "FA-Brands";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://static.igem.wiki/teams/5088/wiki/fonts/fa-brands-400.woff2") format("woff2");
+    }
+
+    @font-face {
+        font-family: "FA-Regular";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://static.igem.wiki/teams/5088/wiki/fonts/fa-regular-400.woff2") format("woff2");
+    }
+
+    @font-face {
+        font-family: "FA-Solid";
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url("https://static.igem.wiki/teams/5088/wiki/fonts/fa-solid-900.woff2") format("woff2");
+    }
+}

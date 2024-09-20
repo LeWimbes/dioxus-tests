@@ -18,6 +18,8 @@ asset_dir = "assets"
 # HTML title tag content
 title = "dioxus-tests"
 
+base_path = "base-path"
+
 [web.watcher]
 
 # when watcher trigger, regenerate the `index.html`
@@ -31,7 +33,7 @@ watch_path = ["src", "assets"]
 
 # CSS style file
 
-style = ["/tailwind.css"]
+style = ["/base-path/tailwind.css"]
 
 # Javascript code file
 script = []

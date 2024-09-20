@@ -8,7 +8,7 @@ edition = "2021"
 
 [dependencies]
 
-dioxus = { git = "https://github.com/DioxusLabs/dioxus", rev = "851abe82d544eea11b3610e40eb47265fc40010b", features = ["web", "router"] }
+dioxus = { git = "https://github.com/LeWimbes/dioxus", branch = "base-path-links-fix", features = ["web", "router"] }
 
 # Debug
 dioxus-logger = "0.5.1"

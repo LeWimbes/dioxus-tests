@@ -38,7 +38,7 @@ fn Page(url_fragment: ReadOnlySignal<String>) -> Element {
 
     let mut update_fragment = move |new_fragment: String| {
         if new_fragment != url_fragment() {
-            navigator().replace(Route::Page { url_fragment: new_fragment.clone() });
+            navigator().push(Route::Page { url_fragment: new_fragment.clone() });
             fragment.set(new_fragment);
         }
     };

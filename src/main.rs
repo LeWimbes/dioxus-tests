@@ -59,9 +59,9 @@ fn Page(url_fragment: ReadOnlySignal<String>) -> Element {
         }
     });
 
-    let handle_navigation = NavigationHandler(Rc::new(move |id: String| {
-        if id != url_fragment() {
-            navigator().push(Route::Page { url_fragment: id });
+    let handle_navigation = NavigationHandler(Rc::new(move |new_fragment: String| {
+        if new_fragment != url_fragment() {
+            navigator().replace(Route::Page { url_fragment: new_fragment });
         }
     }));
 

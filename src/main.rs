@@ -2,6 +2,7 @@
 
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
+use std::rc::Rc;
 use web_sys::window;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -25,35 +26,63 @@ fn App() -> Element {
     }
 }
 
+pub struct NavigationHandler(Rc<dyn Fn(String)>);
+
+impl PartialEq for NavigationHandler {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.0, &other.0)
+    }
+}
+
+impl Clone for NavigationHandler {
+    fn clone(&self) -> Self {
+        NavigationHandler(Rc::clone(&self.0))
+    }
+}
+
+impl NavigationHandler {
+    pub fn to(&self, new_fragment: String) {
+        self.0(new_fragment)
+    }
+}
+
 #[component]
 fn Page(url_fragment: ReadOnlySignal<String>) -> Element {
-    let mut fragment: Signal<String> = use_signal(|| url_fragment());
 
+    // use_effect is needed in case the element in question isn't rendered yet
     use_effect(move || {
-        let document = window().unwrap().document().unwrap();
-        if let Some(element) = document.get_element_by_id(&fragment()) {
-            element.scroll_into_view_with_bool(true);
+        if !url_fragment().is_empty() {
+            let document = window().unwrap().document().unwrap();
+            if let Some(element) = document.get_element_by_id(&url_fragment()) {
+                element.scroll_into_view();
+            }
         }
     });
 
-    let mut update_fragment = move |new_fragment: String| {
-        if new_fragment != url_fragment() {
-            navigator().push(Route::Page { url_fragment: new_fragment.clone() });
-            fragment.set(new_fragment);
+    let handle_navigation = NavigationHandler(Rc::new(move |id: String| {
+        if id != url_fragment() {
+            navigator().push(Route::Page { url_fragment: id });
         }
-    };
+    }));
 
     rsx! {
         p {
             Link { to: Route::Home {}, "Go Home" }
         }
-        p { "Current fragment: '{fragment()}'" }
 
         div { class: "h-96" }
-        h1 { id: "section1", onclick: move |_| update_fragment("section1".into()), "Section1" }
+        Sec { title: "Section1", handle_navigation: handle_navigation.clone() }
         div { class: "h-96" }
-        h1 { id: "section2", onclick: move |_| update_fragment("section2".into()), "Section2" }
+        Sec { title: "Section2", handle_navigation: handle_navigation.clone() }
         div { class: "h-[300rem]" }
+    }
+}
+
+#[component]
+fn Sec(title: String, handle_navigation: NavigationHandler) -> Element {
+    let id = title.to_lowercase().replace(' ', "-");
+    rsx! {
+        h1 { id: "{id}", onclick: move |_| handle_navigation.to(id.clone()), "{title}" }
     }
 }
 

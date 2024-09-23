@@ -2,13 +2,14 @@
 
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
+use web_sys::window;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 enum Route {
     #[route("/")]
     Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
+    #[route("/page#:url_fragment")]
+    Page { url_fragment: String },
 }
 
 fn main() {
@@ -25,28 +26,66 @@ fn App() -> Element {
 }
 
 #[component]
-fn Blog(id: i32) -> Element {
+fn Page(url_fragment: ReadOnlySignal<String>) -> Element {
+    let mut fragment: Signal<String> = use_signal(|| url_fragment());
+
+    use_effect(move || {
+        let document = window().unwrap().document().unwrap();
+        if let Some(element) = document.get_element_by_id(&fragment()) {
+            element.scroll_into_view_with_bool(true);
+        }
+    });
+
+    let mut update_fragment = move |new_fragment: String| {
+        if new_fragment != url_fragment() {
+            navigator().replace(Route::Page { url_fragment: new_fragment.clone() });
+            fragment.set(new_fragment);
+        }
+    };
+
     rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {id}"
+        p {
+            Link { to: Route::Home {}, "Go Home" }
+        }
+        p { "Current fragment: '{fragment()}'" }
+
+        div { class: "h-96" }
+        h1 { id: "section1", onclick: move |_| update_fragment("section1".into()), "Section1" }
+        div { class: "h-96" }
+        h1 { id: "section2", onclick: move |_| update_fragment("section2".into()), "Section2" }
+        div { class: "h-[300rem]" }
     }
 }
 
 #[component]
 fn Home() -> Element {
-    let mut count = use_signal(|| 0);
-
     rsx! {
         p {
-            Link { to: "https://dioxuslabs.com/", new_tab: true, "dioxuslabs.com" }
+            Link {
+                to: Route::Page {
+                    url_fragment: "".into(),
+                },
+                "Go to page"
+            }
         }
         p {
-            Link { to: Route::Blog { id: count() }, "Go to blog" }
+            Link { to: Route::from_route_segment("/page").unwrap(), "Go to page from route segment" }
         }
-        div {
-            h1 { "High-Five counter: {count}" }
-            button { onclick: move |_| count += 1, "Up high!" }
-            button { onclick: move |_| count -= 1, "Down low!" }
+        p {
+            Link {
+                to: Route::Page {
+                    url_fragment: "section1".into(),
+                },
+                "Go to page section1"
+            }
+        }
+        p {
+            Link {
+                to: Route::Page {
+                    url_fragment: "section2".into(),
+                },
+                "Go to page section2"
+            }
         }
     }
 }

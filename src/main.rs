@@ -27,8 +27,37 @@ fn App() -> Element {
 #[component]
 fn Blog(id: i32) -> Element {
     rsx! {
-        Link { to: Route::Home {}, "Go to counter" }
-        "Blog post {id}"
+        nav {
+            class: "fixed top-0 z-50 px-8 w-full flex flex-col items-center bg-black shadow-md h-20",
+            id: "navbar",
+        }
+        // take up space of navbar
+        div { class: "h-20" }
+
+        div { class: "bg-blue-200 h-64" } // header
+
+        div { class: "relative", // body
+
+            div { class: "w-48 sticky top-24 hidden lg:block m-4", // side navbar
+                ul { class: "space-y-4 bg-gray-100 p-4 h-96" }
+            }
+
+            div { class: "px-8 w-full flex flex-col items-center", // main content
+                div { class: "w-full max-w-3xl",
+                    p {
+                        Link { to: Route::Home {}, "Go Home" }
+                    }
+
+                    div { class: "h-96" }
+                    h1 {  "Section1" }
+                    div { class: "h-96" }
+                    h1 {  "Section2" }
+                    div { class: "h-[300rem]" }
+                }
+            }
+        }
+
+        div { class: "h-[100rem] bg-gray-500 " } // footer
     }
 }
 
